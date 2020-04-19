@@ -314,7 +314,7 @@ class DocbookVisitor
     when "visit_simplelist", "visit_itemizedlist", "visit_orderedlist", "visit_variablelist",
          "visit_procedure", "visit_substeps", "visit_stepalternatives"
       @list_depth += 1
-    when "visit_table", "visit_informaltable", "visit_segmentedlist"
+    when "visit_table", "visit_informaltable", "visit_segmentedlist", "visit_revhistory"
       @in_table = true
     when "visit_emphasis"
       marker = get_emphasis_quote_char node
@@ -342,7 +342,7 @@ class DocbookVisitor
            "visit_procedure", "visit_substeps", "visit_stepalternatives"
         @list_depth -= 1
         append_blank_line if method_name == "visit_variablelist"
-      when "visit_table", "visit_informaltable", "visit_segmentedlist"
+      when "visit_table", "visit_informaltable", "visit_segmentedlist", "visit_revhistory"
         @in_table = false
       when "visit_emphasis", "process_literal"
         @nested_formatting.pop
@@ -1285,8 +1285,45 @@ class DocbookVisitor
     node.css('> seglistitem').each do |row|
       append_blank_line
       row.css('> seg').each do |cell|
-        append_line '|'
+        append_line 'a|'
         proceed cell
+      end
+    end
+    append_line '|==='
+    false
+  end
+
+  # Processes a revision history (restricted to what is used in Firebird docs)
+  def visit_revhistory node
+    append_blank_line
+    process_xml_id node
+    append_line %([%autowidth, width="100%", cols="4", options="header", frame="none", grid="none", role="revhistory"])
+    append_line '|==='
+    append_line '4+|Revision History'
+    node.css('> revision').each do |revision|
+      append_blank_line
+      if (revnumber = text_at_css revision, '> revnumber')
+        append_line %(|#{revnumber})
+      else 
+        append_line '|{nbsp}'
+      end
+      if (date = text_at_css revision, '> date')
+        append_line %(|#{date})
+      else 
+        append_line '|{nbsp}'
+      end
+      if (authorinitials = text_at_css revision, '> authorinitials')
+        append_line %(|#{authorinitials})
+      else
+        append_line '|{nbsp}'
+      end
+      if (revremark = text_at_css revision, '> revremark')
+        append_line %{|#{revremark}}
+      elsif (revdescription_node = revision.at_css '> revdescription')
+        append_line 'a|'
+        proceed revdescription_node
+      else
+        append_line '|{nbsp}'
       end
     end
     append_line '|==='
