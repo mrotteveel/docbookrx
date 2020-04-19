@@ -22,10 +22,10 @@ end
 opts = {
 #  runin_admonition_label: true,
 #  sentence_per_line: true,
-#  preserve_line_wrap: false,
+   preserve_line_wrap: false,
 #  delimit_source: true,
-#  idprefix: '_',
-#  idseparator: '_',
+   idprefix: '',
+   idseparator: '-',
 #  normalize_ids: true,
 #  compat_mode: false,
 #  attributes: {
