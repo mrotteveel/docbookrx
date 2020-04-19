@@ -594,7 +594,8 @@ class DocbookVisitor
         title_node.inner_html += %(: #{subtitle_node.inner_html})
       end
       text = format_text title_node
-      text.shift(1)[0]
+      # text.shift(1)[0]
+      text.join('')
     else
       if special
         special.capitalize
@@ -610,7 +611,7 @@ class DocbookVisitor
     # title formatting adds spurious \n, strip leading/trailing ones, replace the others with blanks
     t = title.strip.split("\n").map{|s|s.strip}.join(' ')
     append_line %(#{'=' * @level} #{t})
-    lines.concat(text) unless text.nil? || text.empty?
+    # lines.concat(text) unless text.nil? || text.empty?
     append_ifdef_end_if_condition(title_node) if title_node
     yield if block_given?
     if (info_node = node.at_css('> info'))
@@ -1995,7 +1996,7 @@ class DocbookVisitor
     #  append_blank_line
     #end
     @skip[:indexterm] = entries.size - 1 if entries.size > 1
-    append_blank_line unless @lines[-1].empty?
+    # append_blank_line unless @lines[-1].empty?
     append_line %[(((#{entries * ','})))]
     # Only if next word matches the index term do we use double-bracket form
     #if entries.size == 1
