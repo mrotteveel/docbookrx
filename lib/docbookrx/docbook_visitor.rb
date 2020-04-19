@@ -314,7 +314,7 @@ class DocbookVisitor
     when "visit_simplelist", "visit_itemizedlist", "visit_orderedlist", "visit_variablelist",
          "visit_procedure", "visit_substeps", "visit_stepalternatives"
       @list_depth += 1
-    when "visit_table", "visit_informaltable"
+    when "visit_table", "visit_informaltable", "visit_segmentedlist"
       @in_table = true
     when "visit_emphasis"
       marker = get_emphasis_quote_char node
@@ -342,7 +342,7 @@ class DocbookVisitor
            "visit_procedure", "visit_substeps", "visit_stepalternatives"
         @list_depth -= 1
         append_blank_line if method_name == "visit_variablelist"
-      when "visit_table", "visit_informaltable"
+      when "visit_table", "visit_informaltable", "visit_segmentedlist"
         @in_table = false
       when "visit_emphasis", "process_literal"
         @nested_formatting.pop
@@ -1264,6 +1264,32 @@ class DocbookVisitor
     append_blank_line
     process_xml_id node
     process_table node
+    false
+  end
+
+  # Always converts to a table
+  def visit_segmentedlist node
+    append_blank_line
+    process_xml_id node
+    numheaders = 0
+    node.css('> segtitle').each do |segtitle|
+      numheaders += 1
+    end
+    cols = ('1' * numheaders).split('')
+    append_line %([%autowidth,cols="#{cols * ','}", options="header", frame="none", grid="none", role="segmentedlist"])
+    append_line '|==='
+    node.css('> segtitle').each do |segtitle|
+      append_line '|'
+      proceed segtitle
+    end
+    node.css('> seglistitem').each do |row|
+      append_blank_line
+      row.css('> seg').each do |cell|
+        append_line '|'
+        proceed cell
+      end
+    end
+    append_line '|==='
     false
   end
 
