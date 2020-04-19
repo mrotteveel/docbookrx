@@ -52,7 +52,7 @@ class DocbookVisitor
 
   NORMAL_SECTION_NAMES = ['section', 'simplesect', 'sect1', 'sect2', 'sect3', 'sect4', 'sect5']
 
-  SPECIAL_SECTION_NAMES = ['abstract', 'appendix', 'bibliography', 'glossary', 'preface']
+  SPECIAL_SECTION_NAMES = ['abstract', 'appendix', 'bibliography', 'glossary', 'preface', 'index']
 
   DOCUMENT_NAMES = ['article', 'book', 'set']
 
@@ -569,7 +569,15 @@ class DocbookVisitor
   end
 
   def process_special_section node
+    if (node.name == 'index')
+      append_blank_line
+      append_line 'ifdef::backend-docbook,backend-pdf[]'
+    end
     process_section node, node.name
+    if (node.name == 'index')
+      append_line 'endif::backend-docbook,backend-pdf[]'
+      @requires_index = false
+    end
   end
 
   def process_section node, special = nil
