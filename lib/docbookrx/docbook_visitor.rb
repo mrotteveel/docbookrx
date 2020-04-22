@@ -1509,6 +1509,14 @@ class DocbookVisitor
     res
   end
 
+  def visit_superscript node
+    format_append_text node, '^', '^'
+  end
+
+  def visit_subscript node
+    format_append_text node, '~', '~'
+  end
+
   def visit_text node
     in_para = PARA_TAG_NAMES.include?(node.parent.name) || node.parent.name == 'phrase'
     # drop text if empty unless we're processing a paragraph
