@@ -66,7 +66,7 @@ class DocbookVisitor
 
   FORMATTING_NAMES = LITERAL_NAMES + ['emphasis']
 
-  KEYWORD_NAMES = ['package', 'firstterm', 'citetitle']
+  KEYWORD_NAMES = ['package', 'firstterm', 'citetitle', 'errorcode']
 
   PATH_NAMES = ['directory', 'filename', 'systemitem']
 
