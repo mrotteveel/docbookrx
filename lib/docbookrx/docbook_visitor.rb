@@ -1420,17 +1420,19 @@ class DocbookVisitor
     unless colspecs.empty? || (colspecs.size == numcols)
       warn %(#{numcols} columns specified in table#{title}, but only #{colspecs.size} colspecs)
     end
-    numheadrows = head.css('> row').size
-    if (numheadrows > 1)
-      warn %(#{numheadrows} rows in header specified in table#{title} at #{node.path}, only first row will be written out)
-    end
-    if (head_row = (tgroup.at_css '> thead > row'))
-      numheaders = 0
-      head_row.css('> entry').each do |entry|
-        numheaders += compute_hspan colspecs, entry
+    unless head.nil?
+      numheadrows = head.css('> row').size
+      if (numheadrows > 1)
+        warn %(#{numheadrows} rows in header specified in table#{title} at #{node.path}, only first row will be written out)
       end
-      if numheaders != numcols
-        warn %(#{numcols} columns specified in table#{title}, but only #{numheaders} headers)
+      if (head_row = (tgroup.at_css '> thead > row'))
+        numheaders = 0
+        head_row.css('> entry').each do |entry|
+          numheaders += compute_hspan colspecs, entry
+        end
+        if numheaders != numcols
+          warn %(#{numcols} columns specified in table#{title}, but only #{numheaders} headers)
+        end
       end
     end
     cols = ('1' * numcols).split('')
