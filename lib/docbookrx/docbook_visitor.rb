@@ -76,6 +76,8 @@ class DocbookVisitor
 
   IGNORED_NAMES = ['title', 'subtitle', 'toc']
 
+  INLINE_NAMES = FORMATTING_NAMES + KEYWORD_NAMES + PATH_NAMES + ['link', 'ulink', 'xref']
+
   attr_reader :lines
 
   def initialize opts = {}
@@ -353,8 +355,7 @@ class DocbookVisitor
       when "visit_para", "visit_text", "visit_simpara", 
            "visit_emphasis", "visit_link", "visit_xref"
       else
-        unless ( FORMATTING_NAMES.include? node.name ) || ( ["uri", "ulink", "member"].include? node.name ) || 
-            ( KEYWORD_NAMES.include? node.name ) || ( PATH_NAMES.include? node.name )
+        unless ( INLINE_NAMES.include? node.name ) || ( ["uri", "ulink", "member"].include? node.name )
           @last_added_was_special = true
         end
       end
