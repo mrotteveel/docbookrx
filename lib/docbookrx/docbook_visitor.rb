@@ -64,7 +64,7 @@ class DocbookVisitor
 
   LITERAL_NAMES = ANONYMOUS_LITERAL_NAMES + NAMED_LITERAL_NAMES
 
-  FORMATTING_NAMES = LITERAL_NAMES + ['emphasis']
+  FORMATTING_NAMES = LITERAL_NAMES + ['emphasis', 'quote']
 
   KEYWORD_NAMES = ['package', 'firstterm', 'citetitle', 'errorcode']
 
@@ -251,7 +251,7 @@ class DocbookVisitor
 
   def format_append_text node, prefix="", suffix=""
     text = format_text node
-    line = text.shift(1)[0]
+    line = text.shift(1)[0].strip
     append_text prefix + line + suffix
     lines.concat(text) unless text.empty?
     text
@@ -353,7 +353,8 @@ class DocbookVisitor
       when "visit_para", "visit_text", "visit_simpara", 
            "visit_emphasis", "visit_link", "visit_xref"
       else
-        unless ( FORMATTING_NAMES.include? node.name ) || ( ["uri", "ulink"].include? node.name )
+        unless ( FORMATTING_NAMES.include? node.name ) || ( ["uri", "ulink", "member"].include? node.name ) || 
+            ( KEYWORD_NAMES.include? node.name ) || ( PATH_NAMES.include? node.name )
           @last_added_was_special = true
         end
       end
@@ -1674,7 +1675,7 @@ class DocbookVisitor
   def visit_emphasis node
     quote_char = get_emphasis_quote_char node
     times = (adjacent_character node) ? 2 : 1;
-
+    
     format_append_text node, (quote_char * times), (quote_char * times)
     false
   end
