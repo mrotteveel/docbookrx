@@ -804,7 +804,7 @@ class DocbookVisitor
 
       only_text = true
       node.children.each do |child|
-        if ! ( ( FORMATTING_NAMES.include? child.name ) || ( child.name.eql? "text" ) )
+        if ! ( ( INLINE_NAMES.include? child.name ) || ( child.name.eql? "text" ) )
           only_text = false
           break
         end
@@ -872,11 +872,11 @@ class DocbookVisitor
               lines.concat(text)
             end
           else
-            if ! FORMATTING_NAMES.include? child.name
+            if ! INLINE_NAMES.include? child.name
               if first_line && ! local_continuation
                 append_text ' {empty}' # necessary to fool asciidoctorj into thinking that this is a listitem
               end
-              unless local_continuation || (child.name == 'literallayout' || child.name == 'itemizedlist' || child.name == 'orderedlist' || child.name == 'procedure')
+              unless local_continuation || (child.name == 'itemizedlist' || child.name == 'orderedlist' || child.name == 'procedure')
                 append_line '+'
               end
               @continuation = false
