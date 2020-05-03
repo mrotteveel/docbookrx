@@ -726,6 +726,10 @@ class DocbookVisitor
   end
 
   def visit_simplelist node
+    list_type = node.attribute('type') rescue nil
+    if (list_type && list_type.value != 'vert')
+      warn %(Converting simplelist with type=#{list_type.value} to normal list)
+    end
     append_blank_line
     append_block_title node
     append_blank_line if @list_depth == 1
