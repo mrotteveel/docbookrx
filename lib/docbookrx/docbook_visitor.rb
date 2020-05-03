@@ -484,20 +484,7 @@ class DocbookVisitor
     if (title = text_at_css node, '> title')
       append_line %(= #{title.strip})
     end
-    authors = []
-    (node.css 'author').each do |author_node|
-      # FIXME need to detect DocBook 4.5 vs 5.0 to handle names properly
-      author = if (personname_node = (author_node.at_css 'personname'))
-        [(text_at_css personname_node, 'firstname'), (text_at_css personname_node, 'surname')].compact * ' '
-      else
-        [(text_at_css author_node, 'firstname'), (text_at_css author_node, 'surname')].compact * ' '
-      end
-      if (email_node = (author_node.at_css 'email'))
-        author = %(#{author} <#{text email_node}>)
-      end
-      authors << author unless author.empty?
-    end
-    append_line (authors * '; ') unless authors.empty?
+    handle_author node
     date_line = nil
     if (revnumber_node = node.at_css('revhistory revnumber', 'releaseinfo'))
       date_line = %(v#{revnumber_node.text}, ) 
@@ -521,6 +508,33 @@ class DocbookVisitor
     end
     false
   end
+
+  def handle_author node
+    authors = []
+    (node.css 'author').each do |author_node|
+      # FIXME need to detect DocBook 4.5 vs 5.0 to handle names properly
+      author = if (personname_node = (author_node.at_css 'personname'))
+        [(text_at_css personname_node, 'firstname'), (text_at_css personname_node, 'surname')].compact * ' '
+      else
+        [(text_at_css author_node, 'firstname'), (text_at_css author_node, 'surname')].compact * ' '
+      end
+      if (email_node = (author_node.at_css 'email'))
+        author = %(#{author} <#{text email_node}>)
+      end
+      authors << author unless author.empty?
+    end
+    append_line (authors * '; ') unless authors.empty?
+    false
+  end
+
+  def visit_sectioninfo node
+    handle_author node
+    parent = node.parent
+    node_id = resolve_id parent
+    title = text_at_css parent, 'title'
+    warn %(Possibly incomplete handling of <#{node.name}>: #{title}#{' (' + node_id + ')' if node_id})
+  end
+  alias :visit_chapterinfo :visit_sectioninfo
 
   # Very rough first pass at processing xi:include
   def visit_include node
