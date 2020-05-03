@@ -1851,6 +1851,9 @@ class DocbookVisitor
     end
   
     times = (adjacent_character node) ? 2 : 1;
+    if (node.parent.name == 'quote')
+      times = 2
+    end
     literal_char = ('`' * times)
     other_format_start = other_format_end = ''
 
