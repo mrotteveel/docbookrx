@@ -704,6 +704,9 @@ class DocbookVisitor
     name = node.name
     label = name.upcase
     append_blank_line unless @continuation || (@list_depth > 0)
+    if (id = (resolve_id node, normalize: @normalize_ids))
+      append_line %([[#{id}]])
+    end
     have_title = append_block_title node
     if @list_depth > 0
       append_blank_line if have_title
@@ -1249,6 +1252,9 @@ class DocbookVisitor
   # FIXME wrap this up in a process_block method
   def visit_sidebar node
     append_blank_line
+    if (id = (resolve_id node, normalize: @normalize_ids))
+      append_line %([[#{id}]])
+    end
     append_block_title node 
     elements = node.elements.to_a
     # TODO make skipping title a part of append_block_title perhaps?
