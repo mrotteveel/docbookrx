@@ -729,13 +729,21 @@ class DocbookVisitor
   def visit_simplelist node
     list_type = node.attribute('type') rescue nil
     if (list_type && list_type.value != 'vert')
-      warn %(Converting simplelist with type=#{list_type.value} to normal list)
+      warn %(Converting simplelist with type=#{list_type.value} to normal list in section '#{text_at_css(get_ancestor(node, 'section'), '> title')}' at #{node.path})
     end
     append_blank_line
     append_block_title node
     append_blank_line if @list_depth == 1
     true
   end
+
+  def get_ancestor node, name
+    node.ancestors.each do |ancestor|
+      return ancestor if ancestor.name == name
+    end
+    nil
+  end
+
   def visit_member node
     append_text "* "
     node.children.each do |child|
@@ -1443,7 +1451,7 @@ class DocbookVisitor
     unless head.nil?
       numheadrows = head.css('> row').size
       if (numheadrows > 1)
-        warn %(#{numheadrows} rows in header specified in table#{title} at #{node.path}, only first row will be written out)
+        warn %(#{numheadrows} rows in header specified in table#{title} in section '#{text_at_css(get_ancestor(node, 'section'), '> title')}' at #{node.path}, only first row will be written out)
       end
       if (head_row = (tgroup.at_css '> thead > row'))
         numheaders = 0
