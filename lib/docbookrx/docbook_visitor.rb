@@ -457,9 +457,15 @@ class DocbookVisitor
   def process_doc node
     process_xml_id node
     # In DocBook 5.0, title is directly inside book/article element
-    if (title = text_at_css node, '> title')
+    if (title_node = (node.at_css '> title'))
+      title = if title_node
+        if (subtitle_node = (node.at_css '> subtitle'))
+          title_node.inner_html += %(: #{subtitle_node.inner_html})
+        end
+        text = format_text title_node
+        text.join('').strip.split("\n").map{|s|s.strip}.join(' ')
+      end
       append_line %(= #{title})
-      append_blank_line
     end
     @level += 1
     proceed node, :using_elements => true
@@ -483,9 +489,16 @@ class DocbookVisitor
 
   def process_info node
     # In DocBook 4.5, title is nested inside info element
-    if (title = text_at_css node, '> title')
-      append_line %(= #{title.strip})
+    title_node = (node.at_css '> title')
+    title = if title_node
+      if (subtitle_node = (node.at_css '> subtitle'))
+        title_node.inner_html += %(: #{subtitle_node.inner_html})
+      end
+      text = format_text title_node
+      text.join('').strip.split("\n").map{|s|s.strip}.join(' ')
     end
+    append_line %(= #{title})
+
     handle_author node
     date_line = nil
     if (revnumber_node = node.at_css('revhistory revnumber', 'releaseinfo'))
