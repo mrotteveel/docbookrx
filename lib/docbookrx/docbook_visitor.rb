@@ -507,7 +507,6 @@ class DocbookVisitor
     if (date_node = node.at_css('> date', '> pubdate'))
       append_line %(#{date_line}#{date_node.text})
     end
-    process_abstract node
     if node.name == 'bookinfo' || node.parent.name == 'book' || node.parent.name == 'chapter'
       append_line ':compat-mode:' if @compat_mode
       append_line ':doctype: book'
@@ -521,6 +520,7 @@ class DocbookVisitor
     @attributes.each do |name, val|
       append_line %(:#{name}: #{val}).rstrip
     end
+    process_abstract node
     false
   end
 
