@@ -58,7 +58,7 @@ class DocbookVisitor
 
   SECTION_NAMES = DOCUMENT_NAMES + ['chapter', 'part'] + NORMAL_SECTION_NAMES + SPECIAL_SECTION_NAMES
 
-  ANONYMOUS_LITERAL_NAMES = ['abbrev', 'code', 'computeroutput', 'database', 'function', 'literal', 'tag', 'userinput']
+  ANONYMOUS_LITERAL_NAMES = ['abbrev', 'code', 'computeroutput', 'database', 'function', 'literal', 'tag', 'userinput', 'sgmltag']
 
   NAMED_LITERAL_NAMES = ['acronym', 'application', 'classname', 'command', 'constant', 'date', 'envar', 'exceptionname', 'interfacename', 'methodname', 'option', 'parameter', 'property', 'replaceable', 'type', 'varname']
 
@@ -77,6 +77,8 @@ class DocbookVisitor
   IGNORED_NAMES = ['title', 'subtitle', 'toc']
 
   INLINE_NAMES = FORMATTING_NAMES + KEYWORD_NAMES + PATH_NAMES + ['link', 'ulink', 'xref']
+
+  INLINE_NAMES_AND_TEXT = INLINE_NAMES + ['text']
 
   attr_reader :lines
 
@@ -765,7 +767,7 @@ class DocbookVisitor
     node.children.each do |child|
       child.accept self
     end
-    append_line "" if node.children.last.name == "text"
+    append_line "" if INLINE_NAMES_AND_TEXT.include? node.children.last.name
   end
 
   def visit_itemizedlist node
