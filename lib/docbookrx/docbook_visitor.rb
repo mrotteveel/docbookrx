@@ -60,7 +60,7 @@ class DocbookVisitor
 
   ANONYMOUS_LITERAL_NAMES = ['abbrev', 'code', 'computeroutput', 'database', 'function', 'literal', 'tag', 'userinput', 'sgmltag']
 
-  NAMED_LITERAL_NAMES = ['acronym', 'application', 'classname', 'command', 'constant', 'date', 'envar', 'exceptionname', 'interfacename', 'methodname', 'option', 'parameter', 'property', 'replaceable', 'type', 'varname']
+  NAMED_LITERAL_NAMES = ['acronym', 'application', 'classname', 'command', 'constant', 'date', 'envar', 'exceptionname', 'interfacename', 'methodname', 'option', 'parameter', 'property', 'replaceable', 'type', 'varname', 'prompt']
 
   LITERAL_NAMES = ANONYMOUS_LITERAL_NAMES + NAMED_LITERAL_NAMES
 
